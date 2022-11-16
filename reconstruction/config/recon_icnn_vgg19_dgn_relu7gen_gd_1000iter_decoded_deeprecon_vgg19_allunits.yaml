@@ -1,0 +1,51 @@
+# Reconstruction configuration file
+
+# Feature decoding settings ##################################################
+
+# [REQUIRED] Path to the feature decoding config file that produces decoded features.
+feature decoding:
+  ../../feature-decoding/config/deeprecon_vgg19_allunits.yaml
+
+# True images ################################################################
+
+# Settings for true images are required for evaluation.
+
+true image dir:
+  ./data/images/ImageNetTest
+
+true image ext:
+  JPEG
+
+# Subject/ROI settings for reconstruction ####################################
+
+# [REQUIRED]
+recon subjects:
+  - sub-01
+  - sub-02
+  - sub-03
+
+# [REQUIRED]
+recon rois:
+  - VC
+
+# iCNN reconstruction ########################################################
+
+# [REQUIRED]
+recon output dir:
+  ./recon/icnn/vgg19_dgn_relu7gen_gd_1000iter_pytorch/decoded/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
+
+# [REQUIRED]
+recon image ext:
+  tiff
+
+# [REQUIRED]
+recon icnn num iteration:
+  1000
+
+# [Optional] Required for figure outputs
+recon figure dir:
+  ./figures/icnn/vgg19_dgn_relu7gen_gd_1000iter_pytorch/decoded/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
+
+# [Optional] Required for DNN feature-based evaluation of reconstructed images
+recon eval encoder:
+  AlexNet
