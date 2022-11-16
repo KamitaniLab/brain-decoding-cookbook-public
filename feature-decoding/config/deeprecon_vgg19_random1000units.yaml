@@ -1,0 +1,97 @@
+# fMRI data ##################################################################
+
+training fmri:
+  sub-01:
+    - ./data/fmri/sub-01_ImageNetTraining_fmriprep_volume_native.h5
+  sub-02:
+    - ./data/fmri/sub-02_ImageNetTraining_fmriprep_volume_native.h5
+  sub-03:
+    - ./data/fmri/sub-03_ImageNetTraining_fmriprep_volume_native.h5
+
+test fmri:
+  sub-01:
+    - ./data/fmri/sub-01_ImageNetTest_fmriprep_volume_native.h5
+  sub-02:
+    - ./data/fmri/sub-02_ImageNetTest_fmriprep_volume_native.h5
+  sub-03:
+    - ./data/fmri/sub-03_ImageNetTest_fmriprep_volume_native.h5
+
+rois:
+  V1:  ROI_V1 = 1
+  V2:  ROI_V2 = 1
+  V3:  ROI_V3 = 1
+  V4:  ROI_hV4 = 1
+  LOC: ROI_LOC = 1
+  FFA: ROI_FFA = 1
+  PPA: ROI_PPA = 1
+  LVC: ROI_LVC = 1
+  HVC: ROI_HVC = 1
+  VC:  ROI_VC = 1
+
+# The number of voxels used in feature decoding
+rois voxel num:
+  V1:  500
+  V2:  500
+  V3:  500
+  V4:  500
+  LOC: 500
+  FFA: 500
+  PPA: 500
+  LVC: 500
+  HVC: 500
+  VC:  500
+
+label key:
+  stimulus_name
+
+# DNN features ###############################################################
+
+training feature dir:
+  - ./data/features/ImageNetTraining
+
+test feature dir:
+  - ./data/features/ImageNetTest
+
+network:
+  caffe/VGG19
+
+layers:
+  - conv1_1
+  - conv1_2
+  - conv2_1
+  - conv2_2
+  - conv3_1
+  - conv3_2
+  - conv3_3
+  - conv3_4
+  - conv4_1
+  - conv4_2
+  - conv4_3
+  - conv4_4
+  - conv5_1
+  - conv5_2
+  - conv5_3
+  - conv5_4
+  - fc6
+  - fc7
+  - fc8
+
+feature index file:
+  index_random1000.mat
+
+# Feature decoding ###########################################################
+
+feature decoder dir:
+  ./data/feature_decoders/ImageNetTraining/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
+
+# Decoded features
+decoded feature dir:
+  ./data/decoded_features/ImageNetTest/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
+
+# Learning parameters
+alpha: 100
+chunk axis: 1
+
+# Figure output
+decoding figure dir:
+  ./data/figures/ImageNetTest/feature_decoding/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
