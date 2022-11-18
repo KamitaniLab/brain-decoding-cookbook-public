@@ -98,7 +98,7 @@ def featdec_eval(
                 continue
 
             pred_y = decoded_features.get(layer=layer, subject=subject, roi=roi)
-            pred_labels = decoded_features.labels
+            pred_labels = decoded_features.selected_label
 
             if single_trial:
                 pred_labels = [re.match('trial_\d*-(.*)', x).group(1) for x in pred_labels]
