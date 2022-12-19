@@ -71,7 +71,7 @@ feature decoder dir:
   ./data/feature_decoding_cv/ImageNetTraining/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
 
 decoded feature dir:
-  ./data/feature_decoding_cv/ImageNetTest/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
+  ./data/feature_decoding_cv/ImageNetTraining/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
 
 # Cross-validation -----------------------------------------------------------
 
@@ -118,5 +118,5 @@ chunk axis: 1
 
 # Figure output --------------------------------------------------------------
 decoding figure dir:
-  ./data/figures/ImageNetTest/feature_decoding_cv/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
+  ./data/figures/ImageNetTraining/feature_decoding_cv/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
 
