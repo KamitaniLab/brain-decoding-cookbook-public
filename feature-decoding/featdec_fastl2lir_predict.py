@@ -110,7 +110,12 @@ def featdec_fastl2lir_predict(
 
         # Brain data
         x = data_brain[sbj].select(rois_list[roi])       # Brain data
-        x_labels = data_brain[sbj].get_label(label_key)  # Labels
+        # TODO: Dirty solution. FIXME!
+        try:
+            x_labels = data_brain[sbj].get_label(label_key)  # Labels
+        except ValueError:
+            print(f'{label_key} not found in vmap. Select numerical values of {label_key} as labels.')
+            x_labels = list(data_brain[sbj].select(label_key).flatten())
 
         # Averaging brain data
         if average_sample:
@@ -118,8 +123,11 @@ def featdec_fastl2lir_predict(
             x_labels_unique = [lb for lb in x_labels_unique if lb not in excluded_labels]
             x = np.vstack([np.mean(x[(np.array(x_labels) == lb).flatten(), :], axis=0) for lb in x_labels_unique])
         else:
-            # Label + sample no.
+            # Trial No. + Label
+            # TODO: This should be changed as 'sample No. + label' since single row can be not only trial but also volume.
             x_labels_unique = ['trial_{:04}-{}'.format(i + 1, lb) for i, lb in enumerate(x_labels)]
+
+        import pdb; pdb.set_trace()
 
         print('Elapsed time (data preparation): %f' % (time() - start_time))
 
