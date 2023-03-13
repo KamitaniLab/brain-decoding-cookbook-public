@@ -101,7 +101,7 @@ def featdec_eval(
             pred_labels = decoded_features.selected_label
 
             if single_trial:
-                pred_labels = [re.match('trial_\d*-(.*)', x).group(1) for x in pred_labels]
+                pred_labels = [re.match('sample\d*-(.*)', x).group(1) for x in pred_labels]
 
             if not np.array_equal(pred_labels, true_labels):
                 y_index = [np.where(np.array(true_labels) == x)[0][0] for x in pred_labels]

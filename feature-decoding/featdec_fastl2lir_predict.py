@@ -125,7 +125,7 @@ def featdec_fastl2lir_predict(
         else:
             # Trial No. + Label
             # TODO: This should be changed as 'sample No. + label' since single row can be not only trial but also volume.
-            x_labels_unique = ['trial_{:04}-{}'.format(i + 1, lb) for i, lb in enumerate(x_labels)]
+            x_labels_unique = ['sample{:06}-{}'.format(i + 1, lb) for i, lb in enumerate(x_labels)]
 
         print('Elapsed time (data preparation): %f' % (time() - start_time))
 
