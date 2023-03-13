@@ -127,8 +127,6 @@ def featdec_fastl2lir_predict(
             # TODO: This should be changed as 'sample No. + label' since single row can be not only trial but also volume.
             x_labels_unique = ['trial_{:04}-{}'.format(i + 1, lb) for i, lb in enumerate(x_labels)]
 
-        import pdb; pdb.set_trace()
-
         print('Elapsed time (data preparation): %f' % (time() - start_time))
 
         # Model directory
