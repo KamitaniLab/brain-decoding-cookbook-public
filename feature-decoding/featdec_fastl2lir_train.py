@@ -127,8 +127,8 @@ def featdec_fastl2lir_train(
         x_labels = data_brain[sbj].get_label(label_key)  # Labels
 
         # Target features and image labels (file names)
-        y = data_features.get_features(feat)  # Target DNN features
-        y_labels = data_features.labels       # Labels
+        y_labels = np.unique(x_labels)
+        y = data_features.get(feat, label=y_labels)  # Target DNN features
 
         # Use x that has a label included in y
         x = np.vstack([_x for _x, xl in zip(x, x_labels) if xl in y_labels])
