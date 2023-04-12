@@ -39,7 +39,7 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
 
     # Network settings -------------------------------------------------------
 
-    encoder_param_file = './models/pytorch/VGG_ILSVRC_19_layers/VGG_ILSVRC_19_layers.pt'
+    encoder_param_file = './models/VGG_ILSVRC_19_layers/VGG_ILSVRC_19_layers.pt'
 
     layers = [
         'conv1_1', 'conv1_2', 'conv2_1', 'conv2_2',
@@ -52,16 +52,16 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
 
     encoder_input_shape = (224, 224, 3)
 
-    generator_param_file = './models/pytorch/bvlc_reference_caffenet_generator_ILSVRC2012_Training/generator_relu7.pt'
+    generator_param_file = './models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/generator_relu7.pt'
 
     # Average image of ImageNet
-    image_mean_file = './models/pytorch/VGG_ILSVRC_19_layers/ilsvrc_2012_mean.npy'
+    image_mean_file = './models/VGG_ILSVRC_19_layers/ilsvrc_2012_mean.npy'
     image_mean = np.load(image_mean_file)
     image_mean = np.float32([image_mean[0].mean(), image_mean[1].mean(), image_mean[2].mean()])
 
-    feature_std_file = './models/pytorch/VGG_ILSVRC_19_layers/estimated_cnn_feat_std_VGG_ILSVRC_19_layers_ImgSize_224x224_chwise_dof1.mat'
+    feature_std_file = './models/VGG_ILSVRC_19_layers/estimated_cnn_feat_std_VGG_ILSVRC_19_layers_ImgSize_224x224_chwise_dof1.mat'
 
-    feature_range_file = './models/pytorch/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/fc7.txt'
+    feature_range_file = './models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/relu7.txt'
 
     # Delta degrees of freedom when calculating SD
     # This should be match to the DDoF used in calculating
@@ -338,26 +338,9 @@ if __name__ == '__main__':
         '__filename__': os.path.splitext(os.path.basename(conf_file))[0]
     })
 
-    with open(conf['feature decoding'], 'r') as f:
-        conf_featdec = yaml.safe_load(f)
-
-    conf.update({
-        'feature decoding': conf_featdec
-    })
-
-    if 'analysis name' in conf['feature decoding']:
-        analysis_name = conf['feature decoding']['analysis name']
-    else:
-        analysis_name = ''
-
     recon_icnn_image_vgg19_dgn_relu7gen_dg(
-        os.path.join(
-            conf['feature decoding']['decoded feature dir'],
-            analysis_name,
-            'decoded_features',
-            conf['feature decoding']['network']
-        ),
-        output_dir=os.path.join(conf['recon output dir'], analysis_name),
+        conf['decoded features'],
+        output_dir=conf['recon output dir'],
         subjects=conf['recon subjects'],
         rois=conf['recon rois'],
         n_iter=conf['recon icnn num iteration'],
