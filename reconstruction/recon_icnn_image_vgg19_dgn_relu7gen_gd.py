@@ -142,7 +142,7 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
         os.makedirs(output_dir)
 
     # Save runtime information -----------------------------------------------
-    dump_info(output_dir, script=__file__)
+    # dump_info(output_dir, script=__file__)
 
     # Set reconstruction options ---------------------------------------------
     opts.update({
