@@ -7,7 +7,7 @@
 You can make Python environment to run the code with [Anaconda](https://anaconda.org/).
 
 ```shellsession
-$ conda create -n <env name> -f env.yaml
+$ conda env create -n <env name> -f env.yaml
 $ conda activate <env name>
 ```
 
