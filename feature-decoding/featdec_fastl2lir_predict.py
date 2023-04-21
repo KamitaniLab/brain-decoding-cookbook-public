@@ -123,8 +123,7 @@ def featdec_fastl2lir_predict(
             x_labels_unique = [lb for lb in x_labels_unique if lb not in excluded_labels]
             x = np.vstack([np.mean(x[(np.array(x_labels) == lb).flatten(), :], axis=0) for lb in x_labels_unique])
         else:
-            # Trial No. + Label
-            # TODO: This should be changed as 'sample No. + label' since single row can be not only trial but also volume.
+            # Sample No. + Label
             x_labels_unique = ['sample{:06}-{}'.format(i + 1, lb) for i, lb in enumerate(x_labels)]
 
         print('Elapsed time (data preparation): %f' % (time() - start_time))
