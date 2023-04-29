@@ -1,0 +1,89 @@
+analysis name: deeprecon_fmriprep_rep5_allunits_sklearnRidge_alpha100
+               
+# fMRI data ##################################################################
+
+training fmri:
+  AM:
+    - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/AM_ImageNetTraining_volume_native.h5
+  # ES:
+  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/ES_ImageNetTraining_volume_native.h5
+  # FC:
+  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/FC_ImageNetTraining_volume_native.h5
+  # JP:
+  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/JP_ImageNetTraining_volume_native.h5
+  # KS:
+  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/KS_ImageNetTraining_volume_native.h5
+  # TH:
+  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/TH_ImageNetTraining_volume_native.h5
+
+test fmri:
+  AM:
+    - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/AM_ImageNetTest_volume_native.h5
+  # ES:
+  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/ES_ImageNetTest_volume_native.h5
+  # FC:
+  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/FC_ImageNetTest_volume_native.h5
+  # JP:
+  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/JP_ImageNetTest_volume_native.h5
+  # KS:
+  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/KS_ImageNetTest_volume_native.h5
+  # TH:
+  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/TH_ImageNetTest_volume_native.h5
+
+rois:
+  # V1:  ROI_V1 = 1
+  # V2:  ROI_V2 = 1
+  # V3:  ROI_V3 = 1
+  # V4:  ROI_hV4 = 1
+  # LOC: ROI_LOC = 1
+  # FFA: ROI_FFA = 1
+  # PPA: ROI_PPA = 1
+  # LVC: ROI_LVC = 1
+  # HVC: ROI_HVC = 1
+  VC:  ROI_VC = 1
+
+label key:
+  stimulus_name
+
+# DNN features ###############################################################
+
+training feature dir:
+  - /home/nu/data/contents_shared/ImageNetTraining/derivatives/features
+
+test feature dir:
+  - /home/nu/data/contents_shared/ImageNetTest/derivatives/features
+
+network:
+  caffe/bvlc_alexnet
+
+layers:
+  - conv1
+  - conv2
+  - conv3
+  - conv4
+  - conv5
+  - fc6
+  - fc7
+  - fc8
+
+# Feature decoding ###########################################################
+
+feature decoder dir:
+  # /home/nu/data/contents_shared/ImageNetTraining/derivatives/feature_decoders
+  ./results/ImageNetTraining/derivatives/feature_decoders
+
+# Decoded features
+decoded feature dir:
+  # /home/nu/data/contents_shared/ImageNetTest/derivatives/decoded_features
+  ./results/ImageNetTest/derivatives/decoded_features
+
+test single trial: false
+  
+# Learning parameters
+alpha: 100
+chunk axis: 1
+
+# Figure output
+decoding figure dir:
+  # /home/nu/data/contents_shared/ImageNetTest/derivatives/figures
+  ./results/ImageNetTest/derivatives/figures/feature_decoding
