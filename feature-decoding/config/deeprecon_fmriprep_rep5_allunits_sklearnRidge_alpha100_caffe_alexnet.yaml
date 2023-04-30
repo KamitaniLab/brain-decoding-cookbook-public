@@ -1,34 +1,20 @@
-analysis name: deeprecon_fmriprep_rep5_allunits_sklearnRidge_alpha100
-               
 # fMRI data ##################################################################
 
 training fmri:
-  AM:
-    - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/AM_ImageNetTraining_volume_native.h5
-  # ES:
-  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/ES_ImageNetTraining_volume_native.h5
-  # FC:
-  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/FC_ImageNetTraining_volume_native.h5
-  # JP:
-  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/JP_ImageNetTraining_volume_native.h5
-  # KS:
-  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/KS_ImageNetTraining_volume_native.h5
-  # TH:
-  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/TH_ImageNetTraining_volume_native.h5
+  sub-01:
+    - ./data/fmri/sub-01_ImageNetTraining_fmriprep_volume_native.h5
+  sub-02:
+    - ./data/fmri/sub-02_ImageNetTraining_fmriprep_volume_native.h5
+  sub-03:
+    - ./data/fmri/sub-03_ImageNetTraining_fmriprep_volume_native.h5
 
 test fmri:
-  AM:
-    - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/AM_ImageNetTest_volume_native.h5
-  # ES:
-  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/ES_ImageNetTest_volume_native.h5
-  # FC:
-  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/FC_ImageNetTest_volume_native.h5
-  # JP:
-  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/JP_ImageNetTest_volume_native.h5
-  # KS:
-  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/KS_ImageNetTest_volume_native.h5
-  # TH:
-  #   - /home/kiss/data/fmri_shared/datasets/Deeprecon/fmriprep/TH_ImageNetTest_volume_native.h5
+  sub-01:
+    - ./data/fmri/sub-01_ImageNetTest_fmriprep_volume_native.h5
+  sub-02:
+    - ./data/fmri/sub-02_ImageNetTest_fmriprep_volume_native.h5
+  sub-03:
+    - ./data/fmri/sub-03_ImageNetTest_fmriprep_volume_native.h5
 
 rois:
   # V1:  ROI_V1 = 1
@@ -48,20 +34,31 @@ label key:
 # DNN features ###############################################################
 
 training feature dir:
-  - /home/nu/data/contents_shared/ImageNetTraining/derivatives/features
+  - ./data/features/ImageNetTraining
 
 test feature dir:
-  - /home/nu/data/contents_shared/ImageNetTest/derivatives/features
+  - ./data/features/ImageNetTest
 
 network:
-  caffe/bvlc_alexnet
+  caffe/VGG19
 
 layers:
-  - conv1
-  - conv2
-  - conv3
-  - conv4
-  - conv5
+  - conv1_1
+  - conv1_2
+  - conv2_1
+  - conv2_2
+  - conv3_1
+  - conv3_2
+  - conv3_3
+  - conv3_4
+  - conv4_1
+  - conv4_2
+  - conv4_3
+  - conv4_4
+  - conv5_1
+  - conv5_2
+  - conv5_3
+  - conv5_4
   - fc6
   - fc7
   - fc8
@@ -69,21 +66,16 @@ layers:
 # Feature decoding ###########################################################
 
 feature decoder dir:
-  # /home/nu/data/contents_shared/ImageNetTraining/derivatives/feature_decoders
-  ./results/ImageNetTraining/derivatives/feature_decoders
+  ./data/feature_decoders/ImageNetTraining/deeprecon_fmriprep_rep5_500voxel_allunits_sklearnRidge_alpha100
 
 # Decoded features
 decoded feature dir:
-  # /home/nu/data/contents_shared/ImageNetTest/derivatives/decoded_features
-  ./results/ImageNetTest/derivatives/decoded_features
+  ./data/decoded_features/ImageNetTest/deeprecon_fmriprep_rep5_500voxel_allunits_sklearnRidge_alpha100
 
-test single trial: false
-  
 # Learning parameters
 alpha: 100
 chunk axis: 1
 
 # Figure output
 decoding figure dir:
-  # /home/nu/data/contents_shared/ImageNetTest/derivatives/figures
-  ./results/ImageNetTest/derivatives/figures/feature_decoding
+  ./data/figures/ImageNetTest/feature_decoding/deeprecon_fmriprep_rep5_500voxel_allunits_sklearnRidge_alpha100
