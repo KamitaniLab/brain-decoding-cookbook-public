@@ -6,7 +6,7 @@ This repository provides scripts of deep neural network (DNN) feature decoding f
 
 ### Decoding with PyFastL2LiR
 
-Example config file: [deeprecon_vgg19_allunits.yaml](config/deeprecon_vgg19_allunits.yaml)
+Example config file: [deeprecon_vgg19_pyfastl2lir_allunits.yaml](config/deeprecon_vgg19_pyfastl2lir_allunits.yaml)
 
 - Training: `featdec_fastl2lir_train.py`
 - Test (prediction): `featdec_fastl2lir_predict.py`
@@ -14,7 +14,7 @@ Example config file: [deeprecon_vgg19_allunits.yaml](config/deeprecon_vgg19_allu
 
 ### Decoding with generic regression models
 
-Example config file: [deeprecon_fmriprep_rep5_allunits_sklearnRidge_alpha100_caffe_alexnet.yaml](config/deeprecon_fmriprep_rep5_allunits_sklearnRidge_alpha100_caffe_alexnet.yaml)
+Example config file: [deeprecon_vgg19_sklearnRidge_allunits.yaml](config/deeprecon_vgg19_sklearnRidge_allunits.yaml)
 
 - Training: `featdec_sklearnRidge_train.py` (example for scikit-learn Ridge regression)
 - Test (prediction): `featdec_predict.py`
