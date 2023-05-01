@@ -22,7 +22,7 @@ import yaml
 
 # Main #######################################################################
 
-def featdec_fastl2lir_train(
+def featdec_sklearnRidge_train(
         fmri_data_files,
         features_dir,
         output_dir='./feature_decoders',
@@ -238,7 +238,7 @@ if __name__ == '__main__':
     else:
         feature_index_file = None
 
-    featdec_fastl2lir_train(
+    featdec_sklearnRidge_train(
         conf['training fmri'],
         os.path.join(
             conf['training feature dir'][0],
