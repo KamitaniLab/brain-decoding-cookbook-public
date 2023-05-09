@@ -76,14 +76,17 @@ layers:
   - fc7
   - fc8
 
+feature index file:
+  index_random1000.mat
+
 # Feature decoding ###########################################################
 
 feature decoder dir:
-  ./data/feature_decoders/ImageNetTraining/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
+  ./data/feature_decoders/ImageNetTraining/deeprecon_pyfastl2lir_alpha100_random1000units
 
 # Decoded features
 decoded feature dir:
-  ./data/decoded_features/ImageNetTest/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
+  ./data/decoded_features/ImageNetTest/deeprecon_pyfastl2lir_alpha100_random1000units
 
 # Learning parameters
 alpha: 100
@@ -91,4 +94,4 @@ chunk axis: 1
 
 # Figure output
 decoding figure dir:
-  ./data/figures/ImageNetTest/feature_decoding/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100
+  ./data/figures/ImageNetTest/feature_decoding/deeprecon_pyfastl2lir_alpha100_random1000units
