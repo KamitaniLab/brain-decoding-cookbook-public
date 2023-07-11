@@ -31,7 +31,7 @@ recon rois:
 
 # [REQUIRED]
 recon output dir:
-  ./data/reconstruction/icnn/vgg19_dgn_relu7gen_gd_1000iter_pytorch/decoded/deeprecon_scaling_by_trainmean
+  ./data/reconstruction/icnn/vgg19_dgn_relu7gen_gd_centering_trainmean_1000iter_pytorch/decoded/deeprecon_originals
 
 # [REQUIRED]
 recon image ext:
@@ -43,7 +43,7 @@ recon icnn num iteration:
 
 # [Optional] Required for figure outputs
 recon figure dir:
-  ./figures/reconstruction/icnn/vgg19_dgn_relu7gen_gd_1000iter_pytorch/decoded/deeprecon_scaling_by_trainmean
+  ./figures/reconstruction/icnn/vgg19_dgn_relu7gen_gd_centering_trainmean_1000iter_pytorch/decoded/deeprecon_originals
 
 # [Optional] Required for DNN feature-based evaluation of reconstructed images
 recon eval encoder:

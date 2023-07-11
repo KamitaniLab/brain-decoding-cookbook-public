@@ -61,7 +61,7 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
     image_mean = np.float32([image_mean[0].mean(), image_mean[1].mean(), image_mean[2].mean()])
 
     feature_std_file = './models/VGG_ILSVRC_19_layers/estimated_cnn_feat_std_VGG_ILSVRC_19_layers_ImgSize_224x224_chwise_dof1.mat'
-    feature_trianmean_file = './models/VGG_ILSVRC_19_layers/feature_mean_ImageNetTraining.mat'
+    feature_trianmean_file = './data/features/feature_mean_ImageNetTraining.mat'
     feature_range_file = './models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/relu7.txt'
 
     # Delta degrees of freedom when calculating SD
@@ -125,8 +125,6 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
 
     # Load feature mean of training images
     feat_mean0_train = sio.loadmat(feature_trianmean_file)
-    for layer in ["fc6", "fc7", "fc8"]: # fix shape
-        feat_mean0_train[layer] = feat_mean0_train[layer][0]
         
     # Feature SD estimated from true DNN features of 10000 images
     feat_std0 = sio.loadmat(feature_std_file)
@@ -185,7 +183,7 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
             matfiles = glob.glob(os.path.join(features_dir, layers[0], subject, roi, '*.mat'))
         else:
             matfiles = glob.glob(os.path.join(features_dir, layers[0], '*.mat'))
-        images = [os.path.splitext(os.path.basename(fl))[0] for fl in matfiles]
+        images = sorted([os.path.splitext(os.path.basename(fl))[0] for fl in matfiles])
 
         # Load DNN features
         if decoded:
@@ -232,16 +230,35 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
             # Normalization of decoded features
             #----------------------------------------
             for layer, ft in feat.items():
+                #
                 # Here, the decoded features are centered by train mean features and normalized.
-                if "fc" in layer:
-                    ft = ft - feat_mean0_train[layer]
-                    ft = (ft - np.mean(ft)) / np.std(ft, ddof=1) * np.mean(feat_std0[layer]) + np.mean(ft) 
-                    ft = ft + feat_mean0_train[layer]
-                else:
-                    ft = ft - feat_mean0_train[layer]
-                    ft = (ft - np.mean(ft)) / np.mean(np.std(ft, axis=(0, 2, 3), keepdims=True, ddof=1)) * np.mean(feat_std0[layer]) + np.mean(ft) 
-                    ft = ft + feat_mean0_train[layer]
-                
+                # as below:
+                # 
+                # ft = ft - trmu
+                # ft = {(ft - mu) / mean(sd)} * mean(sd_base) + mu
+                # ft = ft + trmu
+                #
+                # where
+                #
+                #   - ft       raw decoded features
+                #   - trmu     mean of training features in each unit
+                #   - mu       mean of decoded features across units in a
+                #              given layer
+                #   - sd       channel-wise SD of decoded features
+                #   - sd_base  channel-wise SD of features of ImageNet
+                #              Base10000 images
+
+                # centering and normalization 
+                ft = ft - feat_mean0_train[layer]
+                ft = normalize_feature(
+                    ft[0],
+                    channel_wise_mean=False, channel_wise_std=False,
+                    channel_axis=channel_axis,
+                    shift='self', scale=np.mean(feat_std0[layer]),
+                    std_ddof=std_ddof
+                )[np.newaxis]
+                ft = ft + feat_mean0_train[layer]
+                # update
                 feat.update({layer: ft})
 
             # Norm of the DNN features for each layer
@@ -274,13 +291,12 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
                                                  output_dir=save_dir,
                                                  save_snapshot=True,
                                                  snapshot_dir=snapshots_dir,
-                                                 snapshot_ext='tiff',
+                                                 snapshot_interval=10,
+                                                 snapshot_ext='jpg',
                                                  snapshot_postprocess=normalize_image,
                                                  return_loss=True,
                                                  device=device,
                                                  **opts)
-
-            # Save the results
 
             # Save the raw reconstructed image
             recon_image_mat_file = os.path.join(save_dir, 'recon_image' + '-' + image_label + '.mat')
@@ -313,8 +329,6 @@ def image_deprocess(img, image_mean=np.float32([104, 117, 123])):
 # Entry point ################################################################
 
 if __name__ == '__main__':
-    #import sys
-    #sys.argv = ["", "config/recon_icnn_vgg19_dgn_relu7gen_gd_1000iter_decoded_deeprecon_scaling_by_trainmean.yaml"]
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'conf',
