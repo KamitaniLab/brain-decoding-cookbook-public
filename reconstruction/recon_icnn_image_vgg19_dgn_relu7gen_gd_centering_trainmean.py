@@ -61,7 +61,7 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
     image_mean = np.float32([image_mean[0].mean(), image_mean[1].mean(), image_mean[2].mean()])
 
     feature_std_file = './models/VGG_ILSVRC_19_layers/estimated_cnn_feat_std_VGG_ILSVRC_19_layers_ImgSize_224x224_chwise_dof1.mat'
-    feature_trianmean_file = './data/features/feature_mean_ImageNetTraining.mat'
+    feature_trianmean_file = './data/features/ImageNetTraining/VGG_ILSVRC_19_layers/mean.mat'
     feature_range_file = './models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/relu7.txt'
 
     # Delta degrees of freedom when calculating SD
@@ -125,7 +125,7 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
 
     # Load feature mean of training images
     feat_mean0_train = sio.loadmat(feature_trianmean_file)
-        
+
     # Feature SD estimated from true DNN features of 10000 images
     feat_std0 = sio.loadmat(feature_std_file)
 
@@ -233,7 +233,7 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
                 #
                 # Here, the decoded features are centered by train mean features and normalized.
                 # as below:
-                # 
+                #
                 # ft = ft - trmu
                 # ft = {(ft - mu) / mean(sd)} * mean(sd_base) + mu
                 # ft = ft + trmu
@@ -248,7 +248,7 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
                 #   - sd_base  channel-wise SD of features of ImageNet
                 #              Base10000 images
 
-                # centering and normalization 
+                # centering and normalization
                 ft = ft - feat_mean0_train[layer]
                 ft = normalize_feature(
                     ft[0],
@@ -329,6 +329,7 @@ def image_deprocess(img, image_mean=np.float32([104, 117, 123])):
 # Entry point ################################################################
 
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'conf',
