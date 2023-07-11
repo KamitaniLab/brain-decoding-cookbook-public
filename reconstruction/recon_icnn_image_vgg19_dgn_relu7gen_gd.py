@@ -179,7 +179,7 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
             matfiles = glob.glob(os.path.join(features_dir, layers[0], subject, roi, '*.mat'))
         else:
             matfiles = glob.glob(os.path.join(features_dir, layers[0], '*.mat'))
-        images = [os.path.splitext(os.path.basename(fl))[0] for fl in matfiles]
+        images = sorted([os.path.splitext(os.path.basename(fl))[0] for fl in matfiles])
 
         # Load DNN features
         if decoded:
@@ -281,13 +281,12 @@ def recon_icnn_image_vgg19_dgn_relu7gen_dg(
                                                  output_dir=save_dir,
                                                  save_snapshot=True,
                                                  snapshot_dir=snapshots_dir,
-                                                 snapshot_ext='tiff',
+                                                 snapshot_interval=10,
+                                                 snapshot_ext='jpg',
                                                  snapshot_postprocess=normalize_image,
                                                  return_loss=True,
                                                  device=device,
                                                  **opts)
-
-            # Save the results
 
             # Save the raw reconstructed image
             recon_image_mat_file = os.path.join(save_dir, 'recon_image' + '-' + image_label + '.mat')
