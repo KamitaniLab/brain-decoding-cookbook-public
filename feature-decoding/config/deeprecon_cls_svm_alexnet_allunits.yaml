@@ -55,11 +55,11 @@ layers:
 # Feature decoding ###########################################################
 
 feature decoder dir:
-  ./data/feature_decoders/ImageNetTraining/deeprecon_cls_svm_alexnet_allunits
+  ./data/feature_decoders/ImageNetTraining/deeprecon_fmriprep_cls_svm_allunits
 
 # Decoded features
 decoded feature dir:
-  ./data/decoded_features/ImageNetTest/deeprecon_cls_svm_alexnet_allunits
+  ./data/decoded_features/ImageNetTest/deeprecon_fmriprep_cls_svm_allunits
 
 test single trial: false
   
@@ -69,4 +69,4 @@ chunk axis: 1
 
 # Figure output
 decoding figure dir:
-  ./data/figures/ImageNetTest/feature_decoding/deeprecon_cls_svm_alexnet_allunits
+  ./data/figures/ImageNetTest/feature_decoding/deeprecon_fmriprep_cls_svm_allunits

@@ -79,11 +79,11 @@ layers:
 # Feature decoding ###########################################################
 
 feature decoder dir:
-  ./data/feature_decoders/ImageNetTraining/deeprecon_pyfastl2lir_alpha100_vgg19_allunits
+  ./data/feature_decoders/ImageNetTraining/deeprecon_fmriprep_pyfastl2lir_alpha100_allunits
 
 # Decoded features
 decoded feature dir:
-  ./data/decoded_features/ImageNetTest/deeprecon_pyfastl2lir_alpha100_vgg19_allunits
+  ./data/decoded_features/ImageNetTest/deeprecon_fmriprep_pyfastl2lir_alpha100_allunits
 
 # Learning parameters
 alpha: 100
@@ -91,4 +91,4 @@ chunk axis: 1
 
 # Figure output
 decoding figure dir:
-  ./data/figures/ImageNetTest/feature_decoding/deeprecon_pyfastl2lir_alpha100_vgg19_allunits
+  ./data/figures/feature_decoding/ImageNetTest/deeprecon_fmriprep_pyfastl2lir_alpha100_allunits

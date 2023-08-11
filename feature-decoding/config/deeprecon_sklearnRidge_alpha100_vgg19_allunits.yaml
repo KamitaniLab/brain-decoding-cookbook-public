@@ -66,11 +66,11 @@ layers:
 # Feature decoding ###########################################################
 
 feature decoder dir:
-  ./data/feature_decoders/ImageNetTraining/deeprecon_sklearnRidge_alpha100_allunits
+  ./data/feature_decoders/ImageNetTraining/deeprecon_fmriprep_sklearnRidge_alpha100_allunits
 
 # Decoded features
 decoded feature dir:
-  ./data/decoded_features/ImageNetTest/deeprecon_sklearnRidge_alpha100_allunits
+  ./data/decoded_features/ImageNetTest/deeprecon_fmriprep_sklearnRidge_alpha100_allunits
 
 # Learning parameters
 alpha: 100
@@ -78,4 +78,4 @@ chunk axis: 1
 
 # Figure output
 decoding figure dir:
-  ./data/figures/ImageNetTest/feature_decoding/deeprecon_sklearnRidge_alpha100_allunits
+  ./data/figures/ImageNetTest/feature_decoding/deeprecon_fmriprep_sklearnRidge_alpha100_allunits
