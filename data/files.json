@@ -1,0 +1,38 @@
+{
+    "fmri": {
+        "zip": false,
+        "save_in": "./fmri",
+        "files": [
+            {
+                "name":   "sub-01_ImageNetTraining_fmriprep_volume_native.h5",
+                "url":    "https://figshare.com/ndownloader/files/37838826",
+                "md5sum": "f0aba2065e03a518681ceec65674026b"
+            },
+            {
+                "name":   "sub-01_ImageNetTest_fmriprep_volume_native.h5",
+                "url":    "https://figshare.com/ndownloader/files/37838595",
+                "md5sum": "7ab3fd8900a766a79e3f266ff223302a"
+            },
+            {
+                "name":   "sub-02_ImageNetTraining_fmriprep_volume_native.h5",
+                "url":    "https://figshare.com/ndownloader/files/37848333",
+                "md5sum": "8a66fcc107cbef220eb7f94b0737e0cb"
+            },
+            {
+                "name":   "sub-02_ImageNetTest_fmriprep_volume_native.h5",
+                "url":    "https://figshare.com/ndownloader/files/37848300",
+                "md5sum": "3524e5cae596160115b48ce0b9c25be7"
+            },
+            {
+                "name":   "sub-03_ImageNetTraining_fmriprep_volume_native.h5",
+                "url":    "https://figshare.com/ndownloader/files/37850397",
+                "md5sum": "889a3afe44c33182d1ec02d0debe2371"
+            },
+            {
+                "name":   "sub-03_ImageNetTest_fmriprep_volume_native.h5",
+                "url":    "https://figshare.com/ndownloader/files/37849986",
+                "md5sum": "b7ee993435fc9b27ca507d988bdc98e9"
+            }
+        ]
+    }
+}
