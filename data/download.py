@@ -1,4 +1,5 @@
 import os
+import shutil
 import argparse
 import json
 import urllib.request
@@ -16,10 +17,22 @@ def main(cfg):
 
     for fl in target['files']:
         output = os.path.join(target['save_in'], fl['name'])
-        if os.path.exists(output):
-            continue
-        print(f'Downloading {output} from {fl["url"]}')
-        download_file(fl['url'], output, progress_bar=True, md5sum=fl['md5sum'])
+
+        # Downloading
+        if not os.path.exists(output):
+            print(f'Downloading {output} from {fl["url"]}')
+            download_file(fl['url'], output, progress_bar=True, md5sum=fl['md5sum'])
+
+        # Postprocessing
+        if 'postproc' in fl:
+            for pp in fl['postproc']:
+                if pp['name'] == 'unzip':
+                    print(f'Unzipping {output}')
+                    if 'destination' in pp:
+                        dest = pp['destination']
+                    else:
+                        dest = './'
+                    shutil.unpack_archive(output, extract_dir=dest)
 
 
 def download_file(url: str, destination: str, progress_bar: bool = True, md5sum: Union[str, None] = None) -> None:

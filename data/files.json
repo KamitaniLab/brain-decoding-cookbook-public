@@ -34,5 +34,34 @@
                 "md5sum": "b7ee993435fc9b27ca507d988bdc98e9"
             }
         ]
+    },
+    "recon_demo": {
+        "save_in": "./",
+        "files": [
+            {
+                "name":   "decoded_features-ImageNetTest-deeprecon_originals-VGG19.zip",
+                "url":    "https://figshare.com/ndownloader/files/40106476",
+                "md5sum": "4ed63b96690b91230563b6776306ba74",
+                "postproc": [{"name": "unzip"}]
+            },
+            {
+                "name":   "features-ImageNetTraining-VGG_ILSVRC_19_layers-mean.mat.zip",
+                "url":    "https://figshare.com/ndownloader/files/41520621",
+                "md5sum": "5a0a91fe332804f0aa039c13dcb4d388",
+                "postproc": [{"name": "unzip"}]
+            },
+            {
+                "name":   "VGG_ILSVRC_19_layers.zip",
+                "url":    "https://figshare.com/ndownloader/files/38225868",
+                "md5sum": "49f4d6dbf1024f33149352dfd309dc4d",
+                "postproc": [{"name": "unzip", "destination": "./models"}]
+            },
+            {
+                "name":   "bvlc_reference_caffenet_generator_ILSVRC2012_Training.zip",
+                "url":    "https://figshare.com/ndownloader/files/38361230",
+                "md5sum": "bf9d4de43782cb019de733ed7cf84926",
+                "postproc": [{"name": "unzip", "destination": "./models"}]
+            }
+        ]
     }
 }
