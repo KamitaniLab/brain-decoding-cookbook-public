@@ -13,7 +13,11 @@ $ conda activate <env name>
 
 ### Downloading data
 
-Run `download.sh` in `data` and `models` directories to download and prepare data (decoded DNN features, pretrained VGG-19, and pretrained image generator).
+Run the following in `data` directory.
+
+``` shellsession
+$ python download.py recon_demo
+```
 
 ## Usage
 
