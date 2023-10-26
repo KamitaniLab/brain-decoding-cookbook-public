@@ -1,0 +1,47 @@
+# fMRI data ##################################################################
+
+training fmri:
+  s1:
+    - ./data/fmri/visrecon_s1_random.h5
+
+test fmri:
+  s1:
+    - ./data/fmri/visrecon_s1_test.h5
+
+rois:
+  V1:  V1 = 1
+  # V2:  V2 = 1
+
+rois voxel num:
+  V1: 100
+  V2: 100
+  
+label key:
+  stimulus_name
+
+# Target features ############################################################
+
+training feature dir:
+  - ./data/stimulus/random
+
+test feature dir:
+  - ./data/stimulus/test
+
+layers:
+  - 1x1
+  - 1x2
+  - 2x1
+  - 2x2
+
+# Feature decoding ###########################################################
+
+feature decoder dir:
+  ./data/decoders/recon_smlr_100voxelselection
+
+# Decoded features
+decoded feature dir:
+  ./data/prediction/recon_smlr_100voxelselection
+
+test single trial: true
+
+chunk axis: 1
