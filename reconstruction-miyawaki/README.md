@@ -20,4 +20,4 @@ $ python featdec_cls_predict.py config/recon_smlr_100voxelselection.yaml
 
 ### Reconstruction
 
-See [recon_images.ipynb>](./recon_images.ipynb)
+See [recon_images.ipynb](./recon_images.ipynb)
