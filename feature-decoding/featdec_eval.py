@@ -82,6 +82,9 @@ def featdec_eval(
 
     for layer in features:
         print('Layer: {}'.format(layer))
+        
+        true_y = features_test.get(layer=layer)
+        true_labels = features_test.labels
 
         for subject, roi in product(subjects, rois):
             print('Subject: {} - ROI: {}'.format(subject, roi))
@@ -99,9 +102,6 @@ def featdec_eval(
 
             if single_trial:
                 pred_labels = [re.match('sample\d*-(.*)', x).group(1) for x in pred_labels]
-
-            true_labels = pred_labels
-            true_y = features_test.get(layer=layer, label=true_labels)
 
             if not np.array_equal(pred_labels, true_labels):
                 y_index = [np.where(np.array(true_labels) == x)[0][0] for x in pred_labels]
