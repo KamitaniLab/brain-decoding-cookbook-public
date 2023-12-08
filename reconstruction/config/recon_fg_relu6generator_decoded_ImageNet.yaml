@@ -1,0 +1,27 @@
+# Feature-to-generator (FG) reconstruction configuration.
+
+defaults:
+  - generator: relu6generator
+
+decoded_features:
+  name: ImageNetTest_deeprecon_reference_caffenet
+  path: /home/nu/data/contents_shared/ImageNetTest/derivatives/decoded_features/deeprecon_fmriprep_rep3_500voxel_allunits_fastl2lir_alpha100/decoded_features/caffe/bvlc_reference_caffenet
+  subjects:
+    - SA
+  rois:
+    - VC
+  decoders:
+    path: /home/nu/data/contents_shared/ImageNetTraining/derivatives/feature_decoders/deeprecon_fmriprep_rep3_500voxel_allunits_fastl2lir_alpha100/caffe/bvlc_reference_caffenet
+
+fg:
+  feature_scaling: feature_std_train_mean_center
+
+output:
+  path: ./data/reconstruction/fg/${_analysis_name_}_${generator.name}_scaling_${fg.feature_scaling}/decoded
+  prefix: recon_image-
+  ext: tiff
+
+evaluation:
+  true_image:
+    path: /home/nu/data/contents_shared/ImageNetTest/source
+    ext: JPEG
