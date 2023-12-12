@@ -1,19 +1,21 @@
 '''DNN Feature decoding - decoders training script'''
 
 
-from __future__ import print_function
+from typing import Dict, List, Optional
 
 from itertools import product
 import os
 import shutil
 from time import time
 import warnings
-import argparse
 
 import bdpy
+from bdpy.bdata.utils import select_data_multi_bdatas, get_labels_multi_bdatas
 from bdpy.dataform import Features, save_array
+from bdpy.dataform.utils import get_multi_features
 from bdpy.distcomp import DistComp
 from bdpy.ml import ModelTraining
+from bdpy.pipeline.config import init_hydra_cfg
 from bdpy.util import makedir_ifnot
 from fastl2lir import FastL2LiR
 import numpy as np
@@ -23,19 +25,24 @@ import yaml
 # Main #######################################################################
 
 def featdec_fastl2lir_train(
-        fmri_data_files,
-        features_dir,
-        output_dir='./feature_decoders',
-        rois_list=None, num_voxel=None, label_key=None,
-        features_list=None, feature_index_file=None,
-        alpha=100, chunk_axis=1
+        fmri_data: Dict[str, List[str]],
+        features_paths: List[str],
+        output_dir: Optional[str] = './feature_decoders',
+        rois: Optional[Dict[str, str]] = None,
+        num_voxel: Optional[Dict[str, int]] = None,
+        label_key: Optional[str] = None,
+        features: Optional[List[str]] = None,
+        feature_index_file: Optional[str] = None,
+        alpha: int = 100,
+        chunk_axis: int = 1,
+        analysis_name: str = "feature_decoder_training"
 ):
     '''Feature decoder training.
 
     Input:
 
-    - fmri_data_files
-    - features_dir
+    - fmri_data
+    - features_paths
 
     Output:
 
@@ -50,29 +57,30 @@ def featdec_fastl2lir_train(
     If Y.ndim >= 3, Y is divided into chunks along `chunk_axis`.
     Note that Y[0] should be sample dimension.
     '''
+    if rois is None:
+        rois = {}
+    if features is None:
+        features = []
 
-    analysis_basename = os.path.splitext(os.path.basename(__file__))[0] + '-' + conf['__filename__']
-
-    features_list = features_list[::-1]  # Start training from deep layers
+    features = features[::-1]  # Start training from deep layers
 
     # Print info -------------------------------------------------------------
-    print('Subjects:        %s' % list(fmri_data_files.keys()))
-    print('ROIs:            %s' % list(rois_list.keys()))
-    print('Target features: %s' % features_dir)
-    print('Layers:          %s' % features_list)
+    print('Subjects:        %s' % list(fmri_data.keys()))
+    print('ROIs:            %s' % list(rois.keys()))
+    print('Target features: %s' % features_paths)
+    print('Layers:          %s' % features)
     print('')
 
     # Load data --------------------------------------------------------------
     print('----------------------------------------')
     print('Loading data')
 
-    data_brain = {sbj: bdpy.BData(dat_file[0])
-                  for sbj, dat_file in fmri_data_files.items()}
+    data_brain = {sbj: [bdpy.BData(f) for f in data_files] for sbj, data_files in fmri_data.items()}
 
     if feature_index_file is not None:
-        data_features = Features(os.path.join(features_dir), feature_index=feature_index_file)
+        data_features = [Features(f, feature_index=os.path.join(f, feature_index_file)) for f in features_paths]
     else:
-        data_features = Features(os.path.join(features_dir))
+        data_features = [Features(f) for f in features_paths]
 
     # Initialize directories -------------------------------------------------
     makedir_ifnot(output_dir)
@@ -88,7 +96,7 @@ def featdec_fastl2lir_train(
     print('----------------------------------------')
     print('Analysis loop')
 
-    for feat, sbj, roi in product(features_list, fmri_data_files, rois_list):
+    for feat, sbj, roi in product(features, fmri_data, rois):
         print('--------------------')
         print('Feature:    %s' % feat)
         print('Subject:    %s' % sbj)
@@ -97,7 +105,7 @@ def featdec_fastl2lir_train(
 
         # Setup
         # -----
-        analysis_id = analysis_basename + '-' + sbj + '-' + roi + '-' + feat
+        analysis_id = analysis_name + '-' + sbj + '-' + roi + '-' + feat
         results_dir = os.path.join(output_dir, feat, sbj, roi, 'model')
         makedir_ifnot(results_dir)
 
@@ -123,12 +131,12 @@ def featdec_fastl2lir_train(
         start_time = time()
 
         # Brain data
-        x = data_brain[sbj].select(rois_list[roi])       # Brain data
-        x_labels = data_brain[sbj].get_label(label_key)  # Labels
+        x = select_data_multi_bdatas(data_brain[sbj], rois[roi])   # Brain data
+        x_labels = get_labels_multi_bdatas(data_brain[sbj], label_key)  # Labels
 
         # Target features and image labels (file names)
         y_labels = np.unique(x_labels)
-        y = data_features.get(feat, label=y_labels)  # Target DNN features
+        y = get_multi_features(data_features, feat, labels=y_labels)  # Target DNN features
 
         # Use x that has a label included in y
         x = np.vstack([_x for _x, xl in zip(x, x_labels) if xl in y_labels])
@@ -154,8 +162,10 @@ def featdec_fastl2lir_train(
         # Save normalization parameters
         # -----------------------------
         print('Saving normalization parameters.')
-        norm_param = {'x_mean': x_mean, 'y_mean': y_mean,
-                      'x_norm': x_norm, 'y_norm': y_norm}
+        norm_param = {
+            'x_mean': x_mean, 'y_mean': y_mean,
+            'x_norm': x_norm, 'y_norm': y_norm
+        }
         save_targets = [u'x_mean', u'y_mean', u'x_norm', u'y_norm']
         for sv in save_targets:
             save_file = os.path.join(results_dir, sv + '.mat')
@@ -176,7 +186,7 @@ def featdec_fastl2lir_train(
         # Distributed computation setup
         # -----------------------------
         makedir_ifnot('./tmp')
-        distcomp_db = os.path.join('./tmp', analysis_basename + '.db')
+        distcomp_db = os.path.join('./tmp', analysis_name + '.db')
         distcomp = DistComp(backend='sqlite3', db_path=distcomp_db)
 
         # Model training
@@ -185,13 +195,11 @@ def featdec_fastl2lir_train(
         start_time = time()
 
         train = ModelTraining(model, x, y)
-        train.id = analysis_basename + '-' + sbj + '-' + roi + '-' + feat
+        train.id = analysis_id
         train.model_parameters = model_param
 
-        train.X_normalize = {'mean': x_mean,
-                             'std': x_norm}
-        train.Y_normalize = {'mean': y_mean,
-                             'std': y_norm}
+        train.X_normalize = {'mean': x_mean, 'std': x_norm}
+        train.Y_normalize = {'mean': y_mean, 'std': y_norm}
         train.Y_sort = {'index': y_index}
 
         train.dtype = np.float32
@@ -204,7 +212,7 @@ def featdec_fastl2lir_train(
 
         print('Total elapsed time (model training): %f' % (time() - start_time))
 
-    print('%s finished.' % analysis_basename)
+    print('%s finished.' % analysis_name)
 
     return output_dir
 
@@ -212,49 +220,41 @@ def featdec_fastl2lir_train(
 # Entry point ################################################################
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        'conf',
-        type=str,
-        help='analysis configuration file',
-    )
-    args = parser.parse_args()
 
-    conf_file = args.conf
+    cfg = init_hydra_cfg()
 
-    with open(conf_file, 'r') as f:
-        conf = yaml.safe_load(f)
+    analysis_name = cfg["_run_"]["name"] + '-' + cfg["_run_"]["config_name"]
 
-    conf.update({
-        '__filename__': os.path.splitext(os.path.basename(conf_file))[0]
-    })
+    training_fmri = {
+        subject["name"]: subject["paths"]
+        for subject in cfg["decoder"]["training_fmri"]["subjects"]
+    }
+    rois = {
+        roi["name"]: roi["select"]
+        for roi in cfg["decoder"]["training_fmri"]["rois"]
+    }
+    num_voxel = {
+        roi["name"]: roi["selection"]
+        for roi in cfg["decoder"]["training_fmri"]["rois"]
+    }
+    label_key = cfg["decoder"]["training_fmri"]["label_key"]
 
-    if 'analysis name' in conf:
-        feature_decoders_dir = os.path.join(conf['feature decoder dir'], conf['analysis name'], conf['network'])
-    else:
-        feature_decoders_dir = os.path.join(conf['feature decoder dir'], conf['network'])
+    training_target = cfg["decoder"]["target"]["paths"]
+    features = cfg["decoder"]["target"]["layers"]
+    feature_index_file = cfg.decoder.target.get("index_file", None)
 
-    if 'feature index file' in conf:
-        feature_index_file = os.path.join(
-            conf['training feature dir'][0],
-            conf['network'],
-            conf['feature index file']
-        )
-    else:
-        feature_index_file = None
+    decoder_dir = cfg["decoder"]["path"]
 
     featdec_fastl2lir_train(
-        conf['training fmri'],
-        os.path.join(
-            conf['training feature dir'][0],
-            conf['network']
-        ),
-        output_dir=feature_decoders_dir,
-        rois_list=conf['rois'],
-        num_voxel=conf['rois voxel num'],
-        label_key=conf['label key'],
-        features_list=conf['layers'],
+        training_fmri,
+        training_target,
+        output_dir=decoder_dir,
+        rois=rois,
+        num_voxel=num_voxel,
+        label_key=label_key,
+        features=features,
         feature_index_file=feature_index_file,
-        alpha=conf['alpha'],
-        chunk_axis=conf['chunk axis']
+        alpha=cfg["decoder"]["parameters"]["alpha"],
+        chunk_axis=cfg["decoder"]["parameters"]["chunk_axis"],
+        analysis_name=analysis_name
     )
