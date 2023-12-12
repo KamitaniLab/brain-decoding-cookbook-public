@@ -20,16 +20,16 @@ decoder:
       #   paths:
       #     - ./data/fmri/Deeprecon/sub-03_ImageNetTraining_fmriprep_volume_native.h5
     rois:
-      #- {name: V1,  select: ROI_V1 = 1,  selection: 500}
-      #- {name: V2,  select: ROI_V2 = 1,  selection: 500}
-      #- {name: V3,  select: ROI_V3 = 1,  selection: 500}
-      #- {name: hV4, select: ROI_hV4 = 1, selection: 500}
-      #- {name: LOC, select: ROI_LOC = 1, selection: 500}
-      #- {name: FFA, select: ROI_FFA = 1, selection: 500}
-      #- {name: PPA, select: ROI_PPA = 1, selection: 500}
-      #- {name: LVC, select: ROI_LVC = 1, selection: 500}
-      #- {name: HVC, select: ROI_HVC = 1, selection: 500}
-      - {name: VC,  select: ROI_VC = 1,  selection: 500}
+      #- {name: V1,  select: ROI_V1 = 1,  num: 500}
+      #- {name: V2,  select: ROI_V2 = 1,  num: 500}
+      #- {name: V3,  select: ROI_V3 = 1,  num: 500}
+      #- {name: hV4, select: ROI_hV4 = 1, num: 500}
+      #- {name: LOC, select: ROI_LOC = 1, num: 500}
+      #- {name: FFA, select: ROI_FFA = 1, num: 500}
+      #- {name: PPA, select: ROI_PPA = 1, num: 500}
+      #- {name: LVC, select: ROI_LVC = 1, num: 500}
+      #- {name: HVC, select: ROI_HVC = 1, num: 500}
+      - {name: VC,  select: ROI_VC = 1,  num: 500}
     label_key: stimulus_name
 
   target:

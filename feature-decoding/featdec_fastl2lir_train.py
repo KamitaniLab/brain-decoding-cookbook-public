@@ -234,7 +234,7 @@ if __name__ == '__main__':
         for roi in cfg["decoder"]["training_fmri"]["rois"]
     }
     num_voxel = {
-        roi["name"]: roi["selection"]
+        roi["name"]: roi["num"]
         for roi in cfg["decoder"]["training_fmri"]["rois"]
     }
     label_key = cfg["decoder"]["training_fmri"]["label_key"]
