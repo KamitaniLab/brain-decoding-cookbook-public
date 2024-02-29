@@ -6,9 +6,9 @@ defaults:
 
 decoded_features:
   name: ImageNetTest_deeprecon_VGG19
-  path: /home/nu/data/contents_shared/ImageNetTest/derivatives/decoded_features/deeprecon_fmriprep_rep3_500voxel_allunits_fastl2lir_alpha100/decoded_features/caffe/VGG_ILSVRC_19_layers
+  path: /home/nu/data/contents_shared/ImageNetTest/derivatives/decoded_features/deeprecon_fmriprep_rep5_500voxel_allunits_fastl2lir_alpha100/decoded_features/caffe/VGG_ILSVRC_19_layers
   subjects:
-    - SA
+    - TH
   rois:
     - VC
   decoders:
