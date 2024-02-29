@@ -15,7 +15,7 @@ decoded_features:
     path: /home/nu/data/contents_shared/ImageNetTraining/derivatives/feature_decoders/deeprecon_fmriprep_rep3_500voxel_allunits_fastl2lir_alpha100/caffe/VGG_ILSVRC_19_layers
 
 icnn:
-  num_iteration: 500
+  num_iteration: 1000
   feature_scaling: feature_std_train_mean_center
 
 output:

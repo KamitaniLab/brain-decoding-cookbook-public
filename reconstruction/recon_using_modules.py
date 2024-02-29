@@ -7,32 +7,31 @@ from itertools import product
 from pathlib import Path
 import os
 from functools import partial
-from torchvision import transforms
 from bdpy.dataform import Features, DecodedFeatures
 from bdpy.dl.torch.models import layer_map, model_factory
 from bdpy.feature import normalize_feature
 from bdpy.pipeline.config import init_hydra_cfg
-from bdpy.recon.torch.icnn import reconstruct
 from bdpy.recon.utils import normalize_image, clip_extreme
 import hdf5storage
 from hydra.utils import to_absolute_path
 import numpy as np
 from omegaconf import DictConfig
-import PIL.Image
 import scipy.io as sio
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from bdpy.dl.torch.models import VGG19, layer_map
 from bdpy.recon.torch.task import inversion as inversion_module
-from bdpy.dl.torch.domain import Domain, IrreversibleDomain
+from bdpy.dl.torch.domain import IrreversibleDomain
 from bdpy.recon.torch.modules import encoder as encoder_module
 from bdpy.recon.torch.modules import generator as generator_module
 from bdpy.recon.torch.modules import latent as latent_module
 from bdpy.recon.torch.modules import critic as critic_module
-from bdpy.dl.torch.domain import image_domain
 from PIL import Image
-from IPython import embed
+
+def image_deprocess(img, image_mean=np.float32([104, 117, 123])):
+    '''convert from Caffe's input image layout'''
+    return np.dstack((img + np.reshape(image_mean, (3, 1, 1)))[::-1])
 
 class ResizeDomain(IrreversibleDomain):
     def __init__(self, image_size, device):
@@ -55,11 +54,6 @@ class ResizeDomain(IrreversibleDomain):
         )
         return images
 
-def put_features_on(
-    features: dict[str, torch.Tensor], *args, **kwargs
-) -> dict[str, torch.Tensor]:
-    return {k: v.to(*args, **kwargs) for k, v in features.items()}
-
 def recon_icnn_using_modules(
         features_dir: Union[str, Path],
         output_dir: Union[str, Path],
@@ -70,8 +64,6 @@ def recon_icnn_using_modules(
         features_decoders_dir: Optional[Union[str, Path]] = None,
         n_iter: int = 200,
         feature_scaling: Optional[str] = None,
-        output_image_ext: str = "tiff",
-        output_image_prefix: str = "recon_image-",
         device: str = "cuda:0"
 ) -> Union[str, Path]:
     
@@ -79,8 +71,27 @@ def recon_icnn_using_modules(
     layer_mapping = layer_map(encoder_cfg.name)
     layer_names = [layer_mapping[key] for key in encoder_layers]
 
-    dtype = torch.float32
+    # Feature SD estimated from true DNN features of 10000 images
+    feat_std0 = sio.loadmat(encoder_cfg.feature_std_file)
 
+    # Transforms from the output of the generator to the input form of the encoder
+    generator_domain = ResizeDomain(
+        image_size=(224, 224, 3),
+        device=device
+    )
+
+    # Generator setting
+    generator_network = model_factory(generator_cfg.name)
+    generator_network.to(device)
+    generator_network.load_state_dict(torch.load(generator_cfg.parameters_file))
+    generator_network.eval()
+
+    generator = generator_module.FrozenGenerator(
+        generator_network=generator_network,
+        domain=generator_domain
+    )
+
+    # Encoder setting
     feature_network = VGG19()
     feature_network.load_state_dict(torch.load(encoder_cfg.parameters_file))
     feature_network.to(device)
@@ -89,35 +100,25 @@ def recon_icnn_using_modules(
     encoder = encoder_module.SimpleEncoder(
         feature_network=feature_network,
         layer_names=layer_names,
-        domain=image_domain.BdPyVGGDomain(device=device, dtype=dtype),
-    )
-    generator_domain = ResizeDomain(
-        image_size=(224, 224, 3),
-        device=device
     )
 
-    generator_network = model_factory(generator_cfg.name)
-    generator_network.to(device)
-    generator_network.load_state_dict(torch.load(generator_cfg.parameters_file))
-    generator_network.eval()
-
-    generator = generator_module.DNNGenerator(
-        generator_network=generator_network,
-        domain=generator_domain
-    )
-
+    # Loss setting
     critic = critic_module.TargetNormalizedMSE()
-    optimizer = optim.AdamW(generator.parameters(), lr=0.001)
-    scheduler = None
+
+    # Latent setting
     latent = latent_module.ArbitraryLatent(
         shape=(4096,),
         init_fn=partial(nn.init.normal_, mean=0, std=1),
     )
     latent.to(device)
 
+    # optimizer setting
+    optimizer = optim.AdamW([latent()], lr=0.001)
+
+    # for logging etc.
     callbacks = inversion_module.CUILoggingCallback()
 
-
+    # create pipeline
     pipeline = inversion_module.FeatureInversionTask(
         encoder=encoder,
         generator=generator,
@@ -127,7 +128,6 @@ def recon_icnn_using_modules(
         callbacks=callbacks,
         num_iterations= n_iter
     )
-    print('set up')
 
     for subject, roi in product(subjects, rois):
 
@@ -164,18 +164,18 @@ def recon_icnn_using_modules(
             print("Image: " + image_label)
 
             # Districuted computation control
-            #snapshots_dir = os.path.join(
-            #    save_dir, "snapshots", "image-%s" % image_label)
-            #if os.path.exists(snapshots_dir):
-            #    print("Already done or running. Skipped.")
-            #    continue
-            #else:
-            #    os.makedirs(snapshots_dir)
+            snapshots_dir = os.path.join(
+                save_dir, "snapshots", "image-%s" % image_label)
+            if os.path.exists(snapshots_dir):
+                print("Already done or running. Skipped.")
+                continue
+            else:
+                os.makedirs(snapshots_dir)
 
             # Load DNN features
             if decoded:
                 feat = {
-                    layer_mapping[layer]: torch.tensor(features.get(layer=layer, subject=subject, roi=roi, label=image_label)).to(device)
+                    layer_mapping[layer]: features.get(layer=layer, subject=subject, roi=roi, label=image_label)
                     for layer in encoder_layers
                 }
                 # Load bias
@@ -189,15 +189,47 @@ def recon_icnn_using_modules(
                     for layer in encoder_layers
                 }
 
-            
-            pipeline.reset_states()
+            # ----------------------------------------
+            # Normalization of decoded features
+            # ----------------------------------------
+            std_ddof = 1
+            channel_axis = 0
+            if decoded:
+                for layer in encoder_layers:
+                    ft  = feat[layer_mapping[layer]]
+                    if feature_scaling is None:
+                        pass
+                    elif feature_scaling == "feature_std":
+                        ft = normalize_feature(
+                            ft[0],
+                            channel_wise_mean=False, channel_wise_std=False,
+                            channel_axis=channel_axis,
+                            shift='self', scale=np.mean(feat_std0[layer]),
+                            std_ddof=std_ddof
+                        )[np.newaxis]
+                    elif feature_scaling == "feature_std_train_mean_center":
+                        ft = ft - feat_mean0_train[layer]
+                        ft = normalize_feature(
+                            ft[0],
+                            channel_wise_mean=False, channel_wise_std=False,
+                            channel_axis=channel_axis,
+                            shift="self", scale=np.mean(feat_std0[layer]),
+                            std_ddof=std_ddof
+                        )[np.newaxis]
+                        ft = ft + feat_mean0_train[layer]
+                    else:
+                        raise ValueError(f"Unsupported feature scaling: {feature_scaling}")
+
+                    feat.update({layer_mapping[layer]: torch.tensor(ft).to(device)})
+
+            # run reconstruction pipeline
+            pipeline._latent.reset_states()
             generated_image = pipeline(feat)
-            generated_image = torch.reshape(generated_image, (1, 224, 224, 3))
+            generated_image = generated_image.detach().cpu().numpy()[0]
+            generated_image = image_deprocess(generated_image).astype(np.uint8)
 
-            image = Image.fromarray(
-                generated_image[0].detach().cpu().numpy().astype(np.uint8)
-            )
-
+            # save output images
+            image = Image.fromarray(normalize_image(clip_extreme(generated_image, pct=4)))
             image.save(os.path.join(save_dir , f"{image_label}.jpg"))
 
 if __name__ == "__main__":
@@ -224,7 +256,5 @@ if __name__ == "__main__":
         generator_cfg=cfg.generator,
         n_iter=cfg.icnn.num_iteration,
         feature_scaling=cfg.icnn.get("feature_scaling", None),
-        output_image_ext=cfg.output.ext,
-        output_image_prefix=cfg.output.prefix,
         device=cfg.get("device", "cuda:0")
     )
