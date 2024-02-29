@@ -160,7 +160,7 @@ def recon_icnn_using_modules(
             features = Features(features_dir)
 
         # Images loop
-        for i, image_label in enumerate(images[:2]):
+        for i, image_label in enumerate(images):
             print("Image: " + image_label)
 
             # Districuted computation control
