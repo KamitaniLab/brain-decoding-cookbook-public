@@ -215,7 +215,7 @@ if __name__ == '__main__':
     feature_index_file = cfg.decoder.target.get("index_file", None)
 
     average_sample = cfg["decoded_feature"]["parameters"]["average_sample"]
-    excluded_labels = cfg.decoded_feature.parameters.get("exclude_labels", [])
+    excluded_labels = cfg.decoded_feature.test_fmri.get("exclude_labels", [])
 
     featdec_fastl2lir_predict(
         test_fmri_data,
