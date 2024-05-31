@@ -33,9 +33,9 @@ decoder:
     label_key: stimulus_name
 
   target:
-    name: VGG19
+    name: caffe/VGG19
     paths:
-      - ./data/features/ImageNetTraining/caffe/${decoder.target.name}
+      - ./data/features/ImageNetTraining/${decoder.target.name}
     layers:
       # - conv1_1
       # - conv1_2
@@ -90,9 +90,9 @@ decoded_feature:
     exclude_labels:
 
   target:
-    name: VGG19
+    name: caffe/VGG19
     paths:
-      - ./data/features/ImageNetTest/caffe/${decoded_feature.target.name}
+      - ./data/features/ImageNetTest/${decoded_feature.target.name}
     layers:
       # - conv1_1
       # - conv1_2
