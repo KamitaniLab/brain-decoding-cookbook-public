@@ -1,81 +1,115 @@
-# fMRI data ##################################################################
+# DNN feature decoding
 
-training fmri:
-  sub-01:
-    - ./data/fmri/sub-01_ImageNetTraining_fmriprep_volume_native.h5
-  sub-02:
-    - ./data/fmri/sub-02_ImageNetTraining_fmriprep_volume_native.h5
-  sub-03:
-    - ./data/fmri/sub-03_ImageNetTraining_fmriprep_volume_native.h5
+decoder:
+  name: deeprecon_fmriprep_ridge_alpha100_allunits
+  path: ./data/feature_decoders/ImageNetTraining/${decoder.name}/caffe/${decoder.target.name}
+  parameters:
+    alpha: 100
+    chunk_axis: 1
 
-test fmri:
-  sub-01:
-    - ./data/fmri/sub-01_ImageNetTest_fmriprep_volume_native.h5
-  sub-02:
-    - ./data/fmri/sub-02_ImageNetTest_fmriprep_volume_native.h5
-  sub-03:
-    - ./data/fmri/sub-03_ImageNetTest_fmriprep_volume_native.h5
+  training_fmri:
+    name: ImageNetTraining_fmriprep_volume_native
+    subjects:
+      - name: sub-01
+        paths:
+          - ./data/fmri/Deeprecon/sub-01_${decoder.training_fmri.name}.h5
+      # - name: sub-02
+      #   paths:
+      #     - ./data/fmri/Deeprecon/sub-02_${decoder.training_fmri.name}.h5
+      # - name: sub-03
+      #   paths:
+      #     - ./data/fmri/Deeprecon/sub-03_${decoder.training_fmri.name}.h5
+    rois:
+      #- {name: V1,  select: ROI_V1 = 1}
+      #- {name: V2,  select: ROI_V2 = 1}
+      #- {name: V3,  select: ROI_V3 = 1}
+      #- {name: hV4, select: ROI_hV4 = 1}
+      #- {name: LOC, select: ROI_LOC = 1}
+      #- {name: FFA, select: ROI_FFA = 1}
+      #- {name: PPA, select: ROI_PPA = 1}
+      #- {name: LVC, select: ROI_LVC = 1}
+      #- {name: HVC, select: ROI_HVC = 1}
+      - {name: VC,  select: ROI_VC = 1}
+    label_key: stimulus_name
 
-rois:
-  # V1:  ROI_V1 = 1
-  # V2:  ROI_V2 = 1
-  # V3:  ROI_V3 = 1
-  # V4:  ROI_hV4 = 1
-  # LOC: ROI_LOC = 1
-  # FFA: ROI_FFA = 1
-  # PPA: ROI_PPA = 1
-  # LVC: ROI_LVC = 1
-  # HVC: ROI_HVC = 1
-  VC:  ROI_VC = 1
+  target:
+    name: caffe/VGG19
+    paths:
+      - ./data/features/ImageNetTraining/${decoder.target.name}
+    layers:
+      # - conv1_1
+      # - conv1_2
+      # - conv2_1
+      # - conv2_2
+      # - conv3_1
+      # - conv3_2
+      # - conv3_3
+      # - conv3_4
+      # - conv4_1
+      # - conv4_2
+      # - conv4_3
+      # - conv4_4
+      # - conv5_1
+      # - conv5_2
+      # - conv5_3
+      - conv5_4
+      - fc6
+      - fc7
+      - fc8
 
-label key:
-  stimulus_name
+decoded_feature:
+  name: train_deeprecon_rep5_test_ImageNetTest_fmriprep_ridge_alpha100_allunits
+  path: ./data/decoded_features/ImageNetTest/${decoded_feature.name}/caffe/${decoded_feature.target.name}
+  parameters:
+    average_sample: true
 
-# DNN features ###############################################################
+  test_fmri:
+    name: ImageNetTest_fmriprep_volume_native
+    subjects:
+      - name: sub-01
+        paths:
+          - ./data/fmri/Deeprecon/sub-01_${decoded_feature.test_fmri.name}.h5
+      # - name: sub-02
+      #   paths:
+      #     - ./data/fmri/Deeprecon/sub-02_${decoded_feature.test_fmri.name}.h5
+      # - name: sub-03
+      #   paths:
+      #     - ./data/fmri/Deeprecon/sub-03_${decoded_feature.test_fmri.name}.h5
+    rois:
+      # - {name: V1,  select: ROI_V1 = 1}
+      # - {name: V2,  select: ROI_V2 = 1}
+      # - {name: V3,  select: ROI_V3 = 1}
+      # - {name: hV4, select: ROI_hV4 = 1}
+      # - {name: LOC, select: ROI_LOC = 1}
+      # - {name: FFA, select: ROI_FFA = 1}
+      # - {name: PPA, select: ROI_PPA = 1}
+      # - {name: LVC, select: ROI_LVC = 1}
+      # - {name: HVC, select: ROI_HVC = 1}
+      - {name: VC,  select: ROI_VC = 1}
+    label_key: stimulus_name
+    exclude_labels:
 
-training feature dir:
-  - ./data/features/ImageNetTraining
-
-test feature dir:
-  - ./data/features/ImageNetTest
-
-network:
-  VGG_ILSVRC_19_layers
-
-layers:
-  # - conv1_1
-  # - conv1_2
-  # - conv2_1
-  # - conv2_2
-  # - conv3_1
-  # - conv3_2
-  # - conv3_3
-  # - conv3_4
-  # - conv4_1
-  # - conv4_2
-  # - conv4_3
-  # - conv4_4
-  # - conv5_1
-  # - conv5_2
-  # - conv5_3
-  - conv5_4
-  # - fc6
-  # - fc7
-  # - fc8
-
-# Feature decoding ###########################################################
-
-feature decoder dir:
-  ./data/feature_decoders/ImageNetTraining/deeprecon_fmriprep_sklearnRidge_alpha100_allunits
-
-# Decoded features
-decoded feature dir:
-  ./data/decoded_features/ImageNetTest/deeprecon_fmriprep_sklearnRidge_alpha100_allunits
-
-# Learning parameters
-alpha: 100
-chunk axis: 1
-
-# Figure output
-decoding figure dir:
-  ./data/figures/ImageNetTest/feature_decoding/deeprecon_fmriprep_sklearnRidge_alpha100_allunits
+  target:
+    name: caffe/VGG19
+    paths:
+      - ./data/features/ImageNetTest/${decoded_feature.target.name}
+    layers:
+      # - conv1_1
+      # - conv1_2
+      # - conv2_1
+      # - conv2_2
+      # - conv3_1
+      # - conv3_2
+      # - conv3_3
+      # - conv3_4
+      # - conv4_1
+      # - conv4_2
+      # - conv4_3
+      # - conv4_4
+      # - conv5_1
+      # - conv5_2
+      # - conv5_3
+      - conv5_4
+      - fc6
+      - fc7
+      - fc8
