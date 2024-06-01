@@ -2,7 +2,7 @@
 
 decoder:
   name: deeprecon_fmriprep_pyfastl2lir_alpha100_allunits
-  path: ./data/feature_decoders/ImageNetTraining/${decoder.name}/caffe/${decoder.target.name}
+  path: ./data/feature_decoders/ImageNetTraining/${decoder.name}/${decoder.target.name}
   parameters:
     alpha: 100
     chunk_axis: 1
@@ -59,7 +59,7 @@ decoder:
 
 decoded_feature:
   name: train_deeprecon_rep5_test_ImageNetTest_fmriprep_pyfastl2lir_alpha100_allunits
-  path: ./data/decoded_features/ImageNetTest/${decoded_feature.name}/caffe/${decoded_feature.target.name}
+  path: ./data/decoded_features/ImageNetTest/${decoded_feature.name}/${decoded_feature.target.name}
   parameters:
     average_sample: true
 
