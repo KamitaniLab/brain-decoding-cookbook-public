@@ -6,19 +6,33 @@ This repository provides scripts of deep neural network (DNN) feature decoding f
 
 ### Decoding with PyFastL2LiR
 
-Example config file: [deeprecon_vgg19_pyfastl2lir_allunits.yaml](config/deeprecon_vgg19_pyfastl2lir_allunits.yaml)
+Example config file: [deeprecon_pyfastl2lir_alpha100_vgg19_allunits.yaml](config/deeprecon_pyfastl2lir_alpha100_vgg19_allunits)
 
-- Training: `featdec_fastl2lir_train.py`
-- Test (prediction): `featdec_fastl2lir_predict.py`
-- Evaluation: `featdec_eval.py`
+```
+# Decoder training
+python featdec_fastl2lir_train.py config/deeprecon_pyfastl2lir_alpha100_vgg19_allunits.yaml
+
+# Feature prediction
+python featdec_fastl2lir_predict.py config/deeprecon_pyfastl2lir_alpha100_vgg19_allunits.yaml
+
+# Evaluation
+python featdec_eval.py config/deeprecon_pyfastl2lir_alpha100_vgg19_allunits.yaml 
+```
 
 ### Decoding with generic regression models
 
-Example config file: [deeprecon_vgg19_sklearnRidge_allunits.yaml](config/deeprecon_vgg19_sklearnRidge_allunits.yaml)
+Example config file: [deeprecon_ridge_alpha100_vgg19_allunits.yaml](config/deeprecon_ridge_alpha100_vgg19_allunits)
 
-- Training: `featdec_sklearnRidge_train.py` (example for scikit-learn Ridge regression)
-- Test (prediction): `featdec_predict.py`
-- Evaluation: `featdec_eval.py`
+```
+# Decoder training
+python featdec_ridge_train.py config/deeprecon_ridge_alpha100_vgg19_allunits.yaml
+
+# Feature prediction
+python featdec_predict.py config/deeprecon_ridge_alpha100_vgg19_allunits.yaml
+
+# Evaluation
+python featdec_eval.py config/deeprecon_ridge_alpha100_vgg19_allunits.yaml
+```
 
 ### Decoding with classification
 
