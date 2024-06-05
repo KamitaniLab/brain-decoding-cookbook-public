@@ -1,3 +1,6 @@
+"""Binarize features based on means of reference features."""
+
+
 import os
 from itertools import product
 
@@ -6,8 +9,10 @@ import numpy as np
 import hdf5storage
 from tqdm import tqdm 
 
+
 def binarize_features(src: str, dst: str, ref: str = None, scale: float = 0) -> None:
-    '''
+    '''Binaraize features based on means of reference features.
+
     Parameters
     ----------
     src : str
@@ -84,15 +89,15 @@ if __name__ == '__main__':
 
     settings = [
         {
-            'src':   './data/features/ImageNetTest/bvlc_alexnet',
-            'dst':   './data/features/ImageNetTest/bvlc_alexnet_bin_trainmean',
-            'ref':   './data/features/ImageNetTraining/bvlc_alexnet',
+            'src':   './data/features/ImageNetTest/caffe/VGG19',
+            'dst':   './data/features/ImageNetTest/caffe/VGG19_bin_trainmean',
+            'ref':   './data/features/ImageNetTraining/caffe/VGG19',
             'scale': 0
         },
         {
-            'src':   './data/features/ImageNetTraining/bvlc_alexnet',
-            'dst':   './data/features/ImageNetTraining/bvlc_alexnet_bin_trainmean',
-            'ref':   './data/features/ImageNetTraining/bvlc_alexnet',
+            'src':   './data/features/ImageNetTraining/caffe/VGG19',
+            'dst':   './data/features/ImageNetTraining/caffe/VGG19_bin_trainmean',
+            'ref':   './data/features/ImageNetTraining/caffe/VGG19',
             'scale': 0
         },
     ]
