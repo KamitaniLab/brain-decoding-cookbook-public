@@ -1,0 +1,3 @@
+[submodule "feature-decoding"]
+	path = feature-decoding
+	url = git@github.com:KamitaniLab/feature-decoding.git
