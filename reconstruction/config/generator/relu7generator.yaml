@@ -1,0 +1,10 @@
+# @package _group_
+
+name: relu7generator
+input_layer: relu7
+parameters_file: /home/kiss/data/models_shared/pytorch/bvlc_reference_caffenet/generators/ILSVRC2012_Training/relu7/generator.pt
+image_mean_file: /home/mu/data/models_shared/caffe/bvlc_reference_caffenet/ilsvrc_2012_mean.npy
+feature_std_file: /home/mu/data/models_shared/caffe/bvlc_reference_caffenet/estimated_feat_std/estimated_cnn_feat_std_bvlc_reference_caffenet_ImgSize_227x227_chwise_dof1.mat
+latent_shape: [4096]
+latent_upper_bound_file: /home/kiss/data/models_shared/pytorch/bvlc_reference_caffenet/generators/ILSVRC2012_Training/relu7/act_range_3x.txt
+latent_upper_bound_shape: [4096]

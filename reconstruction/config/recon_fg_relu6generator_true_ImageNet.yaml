@@ -1,0 +1,18 @@
+# Feature-to-generator (FG) reconstruction configuration.
+
+defaults:
+  - generator: relu6generator
+
+features:
+  name: ImageNetTest_bvlc_reference_caffenet
+  path: /home/nu/data/contents_shared/ImageNetTest/derivatives/features/caffe/bvlc_reference_caffenet
+
+output:
+  path: ./data/reconstruction/fg/${_analysis_name_}_${generator.name}/true
+  prefix: recon_image-
+  ext: tiff
+
+evaluation:
+  true_image:
+    path: /home/nu/data/contents_shared/ImageNetTest/source
+    ext: JPEG
