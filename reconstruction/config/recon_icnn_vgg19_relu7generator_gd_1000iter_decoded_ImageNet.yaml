@@ -8,7 +8,7 @@ decoded_features:
   name: ImageNetTest_deeprecon_VGG19
   path: ./data/decoded_features/ImageNetTest/train_deeprecon_rep5_test_ImageNetTest_fmriprep_pyfastl2lir_alpha100_allunits/caffe/VGG19
   subjects:
-    - SA
+    - sub-01
   rois:
     - VC
   decoders:
@@ -25,5 +25,5 @@ output:
 
 evaluation:
   true_image:
-    path: /home/nu/data/contents_shared/ImageNetTest/source
+    path: ./data/images/ImageNetTest/source
     ext: JPEG
