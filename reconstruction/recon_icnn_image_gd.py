@@ -130,7 +130,8 @@ def recon_icnn_image_gd(
     feat_std0 = sio.loadmat(encoder_cfg.feature_std_file)
 
     # Feature upper/lower bounds
-    upper_bound = np.loadtxt(generator_cfg.latent_upper_bound_file, delimiter=" ")
+    # Default delimiter (any whitespace) tolerates trailing separators in the act_range files.
+    upper_bound = np.loadtxt(generator_cfg.latent_upper_bound_file)
     upper_bound = upper_bound.reshape(generator_cfg.latent_upper_bound_shape)
 
     # Setup results directory ------------------------------------------------
