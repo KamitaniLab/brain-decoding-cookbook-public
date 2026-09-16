@@ -1,1 +1,5 @@
 .ipynb_checkpoints/
+.venv/
+
+# Lab-internal overlay (see README.md). never tracked here.
+/private/
