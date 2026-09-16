@@ -1,0 +1,50 @@
+# @package _global_
+
+# Locations of model files and datasets, for the data distributed with this
+# repository. Paths are relative to the `reconstruction` directory, which
+# provides `data -> ../data` and `models -> ../data/models` symlinks.
+#
+# Obtain the files with `uv run download.py recon_demo` in `data`.
+# Not everything referenced here is part of that download - see
+# ../../README.md for what you need to produce yourself.
+
+paths:
+
+  # VGG-19 encoder (recon_demo)
+  vgg19_parameters: ./data/models/VGG_ILSVRC_19_layers/VGG_ILSVRC_19_layers.pt
+  vgg19_image_mean: ./data/models/VGG_ILSVRC_19_layers/ilsvrc_2012_mean.npy
+  vgg19_feature_std: ./data/models/VGG_ILSVRC_19_layers/estimated_cnn_feat_std_VGG_ILSVRC_19_layers_ImgSize_224x224_chwise_dof1.mat
+
+  # BVLC reference CaffeNet statistics, used by FG reconstruction (recon_demo)
+  caffenet_image_mean: ./data/models/bvlc_reference_caffenet/ilsvrc_2012_mean.npy
+  caffenet_feature_std: ./data/models/bvlc_reference_caffenet/estimated_cnn_feat_std_bvlc_reference_caffenet_ImgSize_227x227_chwise_dof1.mat
+
+  # Deep generator networks.
+  # recon_demo ships the relu6 and relu7 parameters only; the other entries are
+  # kept so the corresponding configs stay usable against a store that has them.
+  dgn_parameters:
+    norm1: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/generator_norm1.pt
+    norm2: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/generator_norm2.pt
+    pool5: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/generator_pool5.pt
+    relu3: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/generator_relu3.pt
+    relu4: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/generator_relu4.pt
+    relu6: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/generator_relu6.pt
+    relu7: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/generator_relu7.pt
+  dgn_act_range:
+    norm1: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/norm1.txt
+    norm2: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/norm2.txt
+    pool5: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/pool5.txt
+    relu3: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/relu3.txt
+    relu4: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/relu4.txt
+    relu6: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/relu6.txt
+    relu7: ./data/models/bvlc_reference_caffenet_generator_ILSVRC2012_Training/act_range/3x/relu7.txt
+
+  # Datasets.
+  # recon_demo ships `decoded_features_vgg19` only. Feature decoders are produced
+  # by the `feature-decoding` pipeline; see ../../README.md.
+  decoded_features_vgg19: ./data/decoded_features/ImageNetTest/deeprecon_originals/VGG19
+  feature_decoders_vgg19: ./data/feature_decoders/ImageNetTraining/deeprecon_originals/VGG19
+  decoded_features_caffenet: ./data/decoded_features/ImageNetTest/deeprecon_originals/bvlc_reference_caffenet
+  feature_decoders_caffenet: ./data/feature_decoders/ImageNetTraining/deeprecon_originals/bvlc_reference_caffenet
+  features_caffenet: ./data/features/ImageNetTest/bvlc_reference_caffenet
+  true_images: ./data/images/ImageNetTest/source

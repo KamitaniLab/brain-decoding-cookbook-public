@@ -1,18 +1,19 @@
 # Reconstruction configuration file
 
 defaults:
+  - paths: default
   - encoder: vgg19
   - generator: norm1generator
 
 decoded_features:
   name: ImageNetTest_deeprecon_VGG19
-  path: /home/nu/data/contents_shared/ImageNetTest/derivatives/decoded_features/deeprecon_fmriprep_rep3_500voxel_allunits_fastl2lir_alpha100/decoded_features/caffe/VGG_ILSVRC_19_layers
+  path: ${paths.decoded_features_vgg19}
   subjects:
-    - SA
+    - sub-01
   rois:
     - VC
   decoders:
-    path: /home/nu/data/contents_shared/ImageNetTraining/derivatives/feature_decoders/deeprecon_fmriprep_rep3_500voxel_allunits_fastl2lir_alpha100/caffe/VGG_ILSVRC_19_layers
+    path: ${paths.feature_decoders_vgg19}
 
 icnn:
   num_iteration: 1000
@@ -25,5 +26,5 @@ output:
 
 evaluation:
   true_image:
-    path: /home/nu/data/contents_shared/ImageNetTest/source
+    path: ${paths.true_images}
     ext: JPEG
