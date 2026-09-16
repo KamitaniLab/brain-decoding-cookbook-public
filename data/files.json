@@ -61,6 +61,12 @@
                 "url":    "https://ndownloader.figshare.com/files/38361230",
                 "md5sum": "bf9d4de43782cb019de733ed7cf84926",
                 "postproc": [{"name": "unzip", "destination": "./models"}]
+            },
+            {
+                "name":   "bvlc_reference_caffenet.zip",
+                "url":    "https://ndownloader.figshare.com/files/52398902",
+                "md5sum": "2e4fe2126c7ed13554e33d716a72c65f",
+                "postproc": [{"name": "unzip", "destination": "./models"}]
             }
         ]
     }
