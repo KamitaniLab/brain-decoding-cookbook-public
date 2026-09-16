@@ -45,26 +45,6 @@ $ uv sync --extra viz
 > ```
 > The candidate custom index URLs are listed [here](https://pytorch.org/get-started/previous-versions/).
 
-## Configuration
-
-Reconstruction is configured with [Hydra](https://hydra.cc/). Every file location lives in a
-single `paths` config group, so a config can be pointed at a different data store without
-touching the analysis configs:
-
-```
-reconstruction/config/
-├── paths/default.yaml  # where the downloaded models and datasets live
-├── encoder/            # encoder networks; refer to ${paths.*}
-├── generator/          # deep generator networks; refer to ${paths.*}
-└── recon_*.yaml        # analyses; select `paths: default` in their defaults list
-```
-
-To run against a different data store, add another file to `paths/` and select it:
-
-```shellsession
-$ uv run recon_icnn_image_gd.py config/recon_icnn_vgg19_relu7generator_gd_1000iter_decoded_ImageNet.yaml \
-    --override paths=mystore
-```
 
 ## For private cookbook
 
