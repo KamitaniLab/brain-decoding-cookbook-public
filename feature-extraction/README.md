@@ -6,14 +6,14 @@ Extraction of DNN features from images. The features are used as true features i
 
 ### Downloading data
 
-Download the encoder parameters and the ImageNet mean image.
+Download the encoder parameters.
 
 ``` shellsession
 $ cd data
 $ uv run download.py feature_extraction
 ```
 
-This puts `VGG_ILSVRC_19_layers.pt` and `ilsvrc_2012_mean.npy`, among other files, in `data/models/VGG_ILSVRC_19_layers`. The same archive is part of the `recon_demo` target used by the reconstruction analysis, so this step can be skipped if you have already run that.
+This puts `VGG_ILSVRC_19_layers.pt`, among other files, in `data/models/VGG_ILSVRC_19_layers`. The same archive is part of the `recon_demo` target used by the reconstruction analysis, so this step can be skipped if you have already run that.
 
 ### Preparing the images
 
@@ -56,5 +56,5 @@ $ uv run extract_features.py config/extract_features_vgg19_ImageNetTest.yaml --o
 ## Appendix
 
 - The distributed features were extracted with the original Caffe implementation, while this script uses its PyTorch port, and the two are not guaranteed to be identical. The output is therefore stored under `pytorch/VGG19`, separately from the distributed `caffe/VGG19`.
-- The preprocessing follows the original Caffe pipeline (224 x 224 bicubic resize without preserving the aspect ratio, pixel values kept in the 0-255 range, BGR channel order, and subtraction of the channel-wise ImageNet mean), not the torchvision convention. Replacing it with the torchvision defaults produces features that are not comparable with the ones used in this cookbook.
+- The preprocessing follows the original Caffe pipeline (224 x 224 bicubic resize without preserving the aspect ratio, pixel values kept in the 0-255 range, BGR channel order, and subtraction of the fixed channel-wise mean `[104, 117, 123]` given by `encoder.image_mean`), not the torchvision convention. Replacing it with the torchvision defaults produces features that are not comparable with the ones used in this cookbook.
 - Another encoder can be used by adding a config file to `config/encoder`; `encoder.name` is passed to `bdpy.dl.torch.models.model_factory`, and the layer names are the ones of its `layer_map` (`conv1_1`, `fc6`, ...).

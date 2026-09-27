@@ -59,8 +59,12 @@ def extract_image_features(
     input_image_shape = encoder_cfg.input_image_shape
     image_size = (input_image_shape[1], input_image_shape[0])
 
-    # Average image of ImageNet
-    image_mean = _get_image_mean(encoder_cfg)
+    # Channel-wise (BGR) mean subtracted from every image
+    image_mean = np.float32(encoder_cfg.image_mean)
+    if image_mean.shape != (3,):
+        raise ValueError(
+            "encoder.image_mean must be three values (BGR): %s"
+            % encoder_cfg.image_mean)
 
     print("Encoder:      " + encoder_cfg.name)
     print("Input size:   %d x %d" % image_size)
@@ -125,19 +129,6 @@ def extract_image_features(
 
 # Functions ##################################################################
 
-def _get_image_mean(encoder_cfg: DictConfig) -> np.ndarray:
-    """Return the channel-wise (BGR) mean of the training images."""
-
-    image_mean_file = encoder_cfg.get("image_mean_file", None)
-    if image_mean_file is None:
-        return np.float32(encoder_cfg.image_mean)
-
-    image_mean = np.load(image_mean_file)
-
-    return np.float32([
-        image_mean[0].mean(), image_mean[1].mean(), image_mean[2].mean()])
-
-
 def _load_image(
         image_file: Union[str, Path],
         image_size: Tuple[int, int],
@@ -161,7 +152,7 @@ def _load_image(
     # Swap dimensions and colour channels (HWC/RGB --> CHW/BGR)
     x = np.transpose(x, (2, 0, 1))[::-1]
 
-    # Normalization (subtract the mean image)
+    # Normalization (subtract the channel-wise mean)
     x = np.float32(x) - np.reshape(image_mean, (3, 1, 1))
 
     return np.ascontiguousarray(x)
