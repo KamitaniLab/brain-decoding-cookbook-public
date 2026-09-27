@@ -13,7 +13,7 @@ $ cd data
 $ uv run download.py feature_extraction
 ```
 
-This puts `VGG_ILSVRC_19_layers.pt` and `ilsvrc_2012_mean.npy`, among other files, in `data/models/VGG_ILSVRC_19_layers`. The same archive is part of the `recon_demo` target used by the reconstruction analysis, so this step can be skipped if you have already run that. Running this after `recon_demo` (or vice versa) returns a permission error, since `download.py` re-extracts the archive unconditionally and the extracted files are read-only.
+This puts `VGG_ILSVRC_19_layers.pt` and `ilsvrc_2012_mean.npy`, among other files, in `data/models/VGG_ILSVRC_19_layers`. The same archive is part of the `recon_demo` target used by the reconstruction analysis, so this step can be skipped if you have already run that.
 
 ### Preparing the images
 
