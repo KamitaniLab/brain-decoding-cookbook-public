@@ -63,5 +63,16 @@
                 "postproc": [{"name": "unzip", "destination": "./models"}]
             }
         ]
+    },
+    "feature_extraction": {
+        "save_in": "./",
+        "files": [
+            {
+                "name":   "VGG_ILSVRC_19_layers.zip",
+                "url":    "https://ndownloader.figshare.com/files/38225868",
+                "md5sum": "49f4d6dbf1024f33149352dfd309dc4d",
+                "postproc": [{"name": "unzip", "destination": "./models"}]
+            }
+        ]
     }
 }

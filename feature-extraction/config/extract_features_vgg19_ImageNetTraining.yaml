@@ -1,0 +1,16 @@
+# Feature extraction configuration file
+
+defaults:
+  - encoder: vgg19
+
+images:
+  name: ImageNetTraining
+  path: ./data/images/ImageNetTraining/source
+  ext: JPEG
+
+features:
+  name: pytorch/VGG19
+  path: ./data/features/${images.name}/${features.name}
+
+batch_size: 1
+device: cuda:0
