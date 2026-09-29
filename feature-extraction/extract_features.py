@@ -59,16 +59,8 @@ def extract_image_features(
     input_image_shape = encoder_cfg.input_image_shape
     image_size = (input_image_shape[1], input_image_shape[0])
 
-    # Channel-wise (BGR) mean subtracted from every image
-    image_mean = np.float32(encoder_cfg.image_mean)
-    if image_mean.shape != (3,):
-        raise ValueError(
-            "encoder.image_mean must be three values (BGR): %s"
-            % encoder_cfg.image_mean)
-
     print("Encoder:      " + encoder_cfg.name)
     print("Input size:   %d x %d" % image_size)
-    print("Image mean:   " + ", ".join(["%.3f" % m for m in image_mean]))
     print("Layers:       " + ", ".join(layers))
 
     # Get images -------------------------------------------------------------
@@ -108,10 +100,14 @@ def extract_image_features(
         for i in tqdm(range(0, len(todo), batch_size)):
             batch = todo[i:i + batch_size]
 
-            x = np.stack([
-                _load_image(image_file, image_size, image_mean)
+            # NOTE: the batch is made C-contiguous. `image_preprocess` returns
+            # CHW arrays that keep the HWC memory layout, and a non-contiguous
+            # input takes a different convolution path in torch, changing the
+            # features by rounding error.
+            x = np.ascontiguousarray(np.stack([
+                image_preprocess(_load_image(image_file, image_size))
                 for image_file, _ in batch
-            ])
+            ]))
             features = feature_extractor.run(torch.from_numpy(x).to(device))
 
             # Save features
@@ -131,10 +127,9 @@ def extract_image_features(
 
 def _load_image(
         image_file: Union[str, Path],
-        image_size: Tuple[int, int],
-        image_mean: np.ndarray
+        image_size: Tuple[int, int]
 ) -> np.ndarray:
-    """Load an image and convert it into an encoder input array."""
+    """Load an image resized to `image_size`, as an HWC RGB array."""
 
     img = PIL.Image.open(image_file)
 
@@ -147,15 +142,18 @@ def _load_image(
     # the input size of the encoder, as in the original Caffe script.
     img = img.resize(image_size, resample=PIL.Image.BICUBIC)
 
-    x = np.asarray(img)
+    return np.asarray(img)
 
-    # Swap dimensions and colour channels (HWC/RGB --> CHW/BGR)
-    x = np.transpose(x, (2, 0, 1))[::-1]
 
-    # Normalization (subtract the channel-wise mean)
-    x = np.float32(x) - np.reshape(image_mean, (3, 1, 1))
+def image_preprocess(img, image_mean=np.float32([104, 117, 123])):
+    """Convert to Caffe's input image layout.
 
-    return np.ascontiguousarray(x)
+    Same as `image_preprocess` in the iCNN reconstruction code
+    (`reconstruction/recon_icnn_image_gd.py`): swap dimensions and colour
+    channels (HWC/RGB --> CHW/BGR), then subtract the channel-wise (BGR) mean
+    [104, 117, 123].
+    """
+    return np.float32(np.transpose(img, (2, 0, 1))[::-1]) - np.reshape(image_mean, (3, 1, 1))
 
 
 def _is_done(

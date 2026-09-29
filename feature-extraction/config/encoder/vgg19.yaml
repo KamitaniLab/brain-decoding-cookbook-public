@@ -3,7 +3,6 @@
 name: vgg19
 parameters_file: ./models/VGG_ILSVRC_19_layers/VGG_ILSVRC_19_layers.pt
 input_image_shape: [224, 224, 3]
-image_mean: [104, 117, 123]  # BGR
 layers:
   - conv1_1
   - conv1_2
