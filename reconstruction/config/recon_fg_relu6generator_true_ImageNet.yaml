@@ -5,7 +5,7 @@ defaults:
 
 features:
   name: ImageNetTest_bvlc_reference_caffenet
-  path: /home/nu/data/contents_shared/ImageNetTest/derivatives/features/caffe/bvlc_reference_caffenet
+  path: ./data/features/ImageNetTest/bvlc_reference_caffenet
 
 output:
   path: ./data/reconstruction/fg/${_analysis_name_}_${generator.name}/true
@@ -14,5 +14,5 @@ output:
 
 evaluation:
   true_image:
-    path: /home/nu/data/contents_shared/ImageNetTest/source
+    path: ./data/images/ImageNetTest/source
     ext: JPEG
