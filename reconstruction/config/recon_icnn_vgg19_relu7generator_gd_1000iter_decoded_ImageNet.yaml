@@ -6,13 +6,13 @@ defaults:
 
 decoded_features:
   name: ImageNetTest_deeprecon_VGG19
-  path: ./data/decoded_features/ImageNetTest/train_deeprecon_rep5_test_ImageNetTest_fmriprep_pyfastl2lir_alpha100_allunits/caffe/VGG19
+  path: ./data/decoded_features/ImageNetTest/deeprecon_originals/VGG19
   subjects:
     - sub-01
   rois:
     - VC
   decoders:
-    path: ./data/feature_decoders/ImageNetTraining/deeprecon_fmriprep_pyfastl2lir_alpha100_allunits/caffe/VGG19
+    path: ./data/feature_decoders/ImageNetTraining/deeprecon_originals/VGG19
 
 icnn:
   num_iteration: 1000
